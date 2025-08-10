@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+    shell-app:
+        build:
+            context: ./
+        image: mfe-exp-shell-app:v1
+        container_name: shell-app
+        ports:
+            - "8080:80"
+        environment:
+            # Pass the variable to be used by the Nginx template
+            - REMOTE_TODO_APP_URL=http://todo-app:80/remoteEntry.js
+        depends_on:
+            - todo-app
+        networks:
+            - mfe_network
+
+    todo-app:
+        build:
+            context: ../mfe-exp-todo-app
+        image: mfe-exp-todo-app:v1
+        container_name: todo-app
+        ports:
+            - "8081:80"
+        networks:
+            - mfe_network
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost/"]
+            interval: 30s
+            retries: 3
+
+networks:
+    mfe_network:
+        driver: bridge
