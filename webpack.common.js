@@ -1,4 +1,3 @@
-const { ModuleFederationPlugin } = require("webpack").container;
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 const dotenv = require("dotenv");
@@ -47,19 +46,11 @@ module.exports = {
 		],
 	},
 	plugins: [
-		new ModuleFederationPlugin({
-			name: "shellApp",
-			remotes: {
-				todoApp: `todoApp@${
-					process.env.NODE_ENV === "development"
-						? process.env.REMOTE_TODO_APP_URL
-						: "window.REMOTE_TODO_APP_URL"
-				}/remoteEntry.js`,
-			},
-			shared: ["react", "react-dom"],
-		}),
 		new HtmlWebpackPlugin({
 			template: path.resolve(__dirname, "public", "index.html"),
+			inject: "body",
+			minify: false,
+			remoteTodoUrl: process.env.REMOTE_TODO_APP_URL,
 		}),
 		new webpack.DefinePlugin({
 			"process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),

@@ -8,7 +8,8 @@
 	<body class="bg-gray-100 text-gray-800">
 		<div id="root"></div>
 		<script>
-			window.REMOTE_TODO_APP_URL = "${REMOTE_TODO_APP_URL}";
+			window.REMOTE_TODO_APP_URL =
+				"<%= htmlWebpackPlugin.options.remoteTodoUrl || '' %>";
 		</script>
 	</body>
 </html>
