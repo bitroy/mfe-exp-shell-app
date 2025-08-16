@@ -9,7 +9,6 @@ services:
         ports:
             - "8080:80"
         environment:
-            # Pass the variable to be used by the Nginx template
             - REMOTE_TODO_APP_URL=http://todo-app:80/remoteEntry.js
         depends_on:
             - todo-app
