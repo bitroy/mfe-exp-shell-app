@@ -1,28 +1,49 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error) {
-    // Update state so the next render will show the fallback UI.
-    return { hasError: true };
+    return { hasError: true, error };
   }
 
   componentDidCatch(error, errorInfo) {
-    // You can also log the error to an error reporting service
     console.error("Uncaught error:", error, errorInfo);
   }
 
   render() {
-    if (this.state.hasError) {
-      // You can render any custom fallback UI
-      return <h1>Something went wrong. The To-do list app failed to load.</h1>;
+    const { hasError } = this.state;
+
+    if (hasError) {
+      return (
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: 300,
+            textAlign: "center",
+            bgcolor: "background.paper",
+          }}
+        >
+          <ErrorOutlineIcon color="error" sx={{ fontSize: 60, mb: 2 }} />
+          <Typography variant="h6" gutterBottom>
+            Oops! Something went wrong
+          </Typography>
+        </Paper>
+      );
     }
 
-    return this.props.children; 
+    return this.props.children;
   }
 }
 
