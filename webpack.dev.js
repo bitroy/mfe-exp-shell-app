@@ -1,8 +1,6 @@
-const { ModuleFederationPlugin } = require("webpack").container;
+const { ModuleFederationPlugin } = require("@module-federation/enhanced");
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common");
-const path = require("path");
-const { getRemotes } = require("./config/remote");
 
 module.exports = merge(common, {
 	mode: "development",
@@ -15,7 +13,7 @@ module.exports = merge(common, {
 	plugins: [
 		new ModuleFederationPlugin({
 			name: "shellApp",
-			remotes: getRemotes(true),
+			remotes: {},
 			shared: {
 				react: { singleton: true, requiredVersion: false },
 				"react-dom": { singleton: true, requiredVersion: false },

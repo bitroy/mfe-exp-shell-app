@@ -1,4 +1,4 @@
-const { ModuleFederationPlugin } = require("webpack").container;
+const { ModuleFederationPlugin } = require("@module-federation/enhanced");
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -6,7 +6,6 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const path = require("path");
-const { getRemotes } = require("./config/remote");
 
 module.exports = merge(common, {
 	mode: "production",
@@ -23,7 +22,7 @@ module.exports = merge(common, {
 	plugins: [
 		new ModuleFederationPlugin({
 			name: "shellApp",
-			remotes: getRemotes(false),
+			remotes: {},
 			shared: {
 				react: { singleton: true, requiredVersion: false },
 				"react-dom": { singleton: true, requiredVersion: false },
