@@ -1,34 +1,21 @@
-import React from "react";
+import React from 'react';
+import { CacheProvider, ThemeProvider } from "@emotion/react";
 import { createRoot } from "react-dom/client";
-import ErrorBoundary from "./components/ErrorBoundary";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
-import Sidebar from "./components/Sidebar";
-import { useRemoteComponent } from "./hooks/useRemoteComponent";
-import "./index.css";
+import CssBaseline from '@mui/material/CssBaseline';
 
-const App = () => {
-	const {
-		Component: TodoList,
-		loading,
-		error,
-	} = useRemoteComponent("todoApp", "TodoList");
+import App from "./App";
+import cache from "./emotionCache";
+import theme from "./theme";
 
-	if (loading) return <div>Loading remote…</div>;
-	if (error) return <div>Error: {error.message}</div>;
-
+const AppShell = () => {
 	return (
-		<>
-			<Header />
-			<main className="flex">
-				<Sidebar />
-				<div className="flex-1">
-					<ErrorBoundary>{TodoList && <TodoList />}</ErrorBoundary>
-				</div>
-			</main>
-			<Footer />
-		</>
+		<CacheProvider value={cache}>
+			<ThemeProvider theme={theme}>
+				<CssBaseline />
+				<App />
+			</ThemeProvider>
+		</CacheProvider>
 	);
 };
 
-createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById("root")).render(<AppShell />);
