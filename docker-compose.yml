@@ -1,34 +1,8 @@
-version: "3.8"
-
 services:
     shell-app:
         build:
-            context: ./
-        image: mfe-exp-shell-app:v1
-        container_name: shell-app
+            context: .
+            dockerfile: Dockerfile
+        container_name: mfe-shell-app
         ports:
-            - "8080:80"
-        environment:
-            - REMOTE_TODO_APP_URL=http://todo-app:80/remoteEntry.js
-        networks:
-            - mfe_network
-        restart: unless-stopped
-
-    todo-app:
-        build:
-            context: ../mfe-exp-todo-app
-        image: mfe-exp-todo-app:v1
-        container_name: todo-app
-        ports:
-            - "8081:80"
-        networks:
-            - mfe_network
-        healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost/"]
-            interval: 30s
-            retries: 3
-        restart: unless-stopped
-
-networks:
-    mfe_network:
-        driver: bridge
+            - "3000:80"

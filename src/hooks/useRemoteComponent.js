@@ -1,43 +1,55 @@
-import {
-	loadRemote,
-	registerRemotes,
-} from "@module-federation/enhanced/runtime";
-import { useEffect, useState } from "react";
-import resolveRemoteUrl from "../utils/resolveRemoteURL";
+import React, { useEffect, useRef, useState } from "react";
+import { loadRemote } from "@module-federation/enhanced/runtime";
 
 export function useRemoteComponent(remoteName, moduleName) {
-	const [Component, setComponent] = useState(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+  const [Component, setComponent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-	useEffect(() => {
-		let mounted = true;
+  useEffect(() => {
+    let isMounted = true;
 
-		async function getRemoteComponent() {
-			try {
-				const remoteUrl = await resolveRemoteUrl(remoteName);
+    const getRemoteComponent = async () => {
+      try {
+        const Mod = await loadRemote(`${remoteName}/${moduleName}`);
 
-				registerRemotes([{ name: remoteName, entry: remoteUrl }]);
+        let Comp;
+        if (Mod?.mount && typeof Mod.mount === "function") {
+          Comp = function MountWrapper() {
+            const containerRef = useRef(null);
 
-				const Mod = await loadRemote(`${remoteName}/${moduleName}`, {
-					from: remoteUrl,
-				});
+            useEffect(() => {
+              if (containerRef.current) {
+                Mod.mount(containerRef.current);
+              }
+            }, []);
 
-				const Comp = Mod?.default || Mod;
+            return <div ref={containerRef} />;
+          };
+        } else {
+          Comp = Mod?.default || Mod;
+        }
 
-				if (mounted) setComponent(() => Comp);
-			} catch (err) {
-				if (mounted) setError(err);
-			} finally {
-				if (mounted) setLoading(false);
-			}
-		}
+        if (isMounted) {
+          setComponent(() => Comp);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
 
-		getRemoteComponent();
-		return () => {
-			mounted = false;
-		};
-	}, [remoteName, moduleName]);
+    getRemoteComponent();
 
-	return { Component, loading, error };
+    return () => {
+      isMounted = false;
+    };
+  }, [remoteName, moduleName]);
+
+  return { Component, loading, error };
 }

@@ -1,14 +1,8 @@
+const { ModuleFederationPlugin } = require("@module-federation/enhanced");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
-const dotenv = require("dotenv");
-const webpack = require("webpack");
-
-const envPath =
-	process.env.NODE_ENV === "development"
-		? "./.env.development"
-		: "./.env.production";
-
-dotenv.config({ path: path.resolve(__dirname, envPath) });
+const Dotenv = require("dotenv-webpack");
+const pkg = require("./package.json");
 
 module.exports = {
 	entry: "./src/index.js",
@@ -32,10 +26,25 @@ module.exports = {
 			template: path.resolve(__dirname, "public", "index.html"),
 			inject: "body",
 			minify: false,
-			remoteTodoUrl: process.env.REMOTE_TODO_APP_URL,
+			remoteAppContainerURL: process.env.REMOTE_APP_CONTAINER_URL,
 		}),
-		new webpack.DefinePlugin({
-			"process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+		new Dotenv({
+			path: `./.env.${process.env.NODE_ENV}`,
+			safe: false,
+		}),
+		new ModuleFederationPlugin({
+			name: "shellApp",
+			remotes: {},
+			shared: {
+				react: {
+					singleton: true,
+					requiredVersion: pkg.dependencies["react"],
+				},
+				"react-dom": {
+					singleton: true,
+					requiredVersion: pkg.dependencies["react-dom"],
+				},
+			},
 		}),
 	],
 	resolve: { extensions: [".js", ".jsx"] },
