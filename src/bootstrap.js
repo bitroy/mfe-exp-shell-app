@@ -6,6 +6,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import App from "./App";
 import cache from "./emotionCache";
 import theme from "./theme";
+import { federationConfig } from './federationConfig';
+import { init } from '@module-federation/enhanced/runtime';
 
 const AppShell = () => {
 	return (
@@ -18,4 +20,12 @@ const AppShell = () => {
 	);
 };
 
-createRoot(document.getElementById("root")).render(<AppShell />);
+const mount = async (el) => {
+  await init(federationConfig());
+  createRoot(el).render(<AppShell />);
+};
+
+const rootEl = document.getElementById("shell-root");
+if (rootEl) {
+  mount(rootEl);
+}

@@ -1,4 +1,3 @@
-const { ModuleFederationPlugin } = require("@module-federation/enhanced");
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common");
 const TerserPlugin = require("terser-webpack-plugin");
@@ -47,17 +46,9 @@ module.exports = merge(common, {
 	output: {
 		path: path.resolve(__dirname, "dist"),
 		filename: "[name].[contenthash].js",
-		publicPath: "/",
+		publicPath: "auto",
 	},
 	plugins: [
-		new ModuleFederationPlugin({
-			name: "shellApp",
-			remotes: {},
-			shared: {
-				react: { singleton: true, requiredVersion: false },
-				"react-dom": { singleton: true, requiredVersion: false },
-			},
-		}),
 		new CleanWebpackPlugin(),
 	],
 });
